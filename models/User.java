@@ -13,8 +13,9 @@ public class User {
         this.user = user;
         this.id = id;
         this.email = email;
-        this.friends = friends;
+        this.friends = new ArrayList<>();
     }
+    
 
     public String getUser(){
         return user;

@@ -4,6 +4,7 @@ import java.util.Queue;
 import java.util.LinkedList;
 import java.util.HashSet;
 import java.util.ArrayList;
+import java.util.Stack;
 public class SocialGraph {
     private HashMap<Integer, User> users;
     public SocialGraph(){
@@ -47,7 +48,6 @@ public class SocialGraph {
         ArrayList<User> result = new ArrayList<>();
         traverse.add(start);
         visited.add(start);
-        result.add(start);
         while(!traverse.isEmpty()){
             User current = traverse.poll();
             result.add(current);
@@ -69,7 +69,7 @@ public class SocialGraph {
         
         for (User friend: user.getFriends()){
             for (User friendOfFriend: friend.getFriends()){
-                if (friendOfFriend == user){
+                if (friendOfFriend.getId() == user.getId()){
                     continue;
                 }
                 if (user.getFriends().contains(friendOfFriend)){
@@ -109,5 +109,52 @@ public class SocialGraph {
         return users.get(id).getFriends().size();
     }
 
+    public double averageFriendCount(){
+        if (users.isEmpty()){
+            return 0;
+        }
+        double total = 0;
+        for (User user: users.values()){
+            int numberOfFriends = user.getFriends().size();
+            total = total + numberOfFriends;
+        }
+        return total/users.size();
+    }
+
+    public ArrayList<User> isolatedUsers(){
+        if (users.isEmpty()){
+            return new ArrayList<>();
+        }
+        ArrayList <User> isolated = new ArrayList<>();
+        for (User user: users.values()){
+            if (user.getFriends().isEmpty()){
+                isolated.add(user);
+            }
+        }
+        return isolated;
+    }
+
+    public ArrayList<User> dfsTraversal(int startId){
+        User user = findUser(startId);
+        if (user == null){
+            return new ArrayList<>();
+        }
+        Stack<User> stack = new Stack<>();
+        HashSet<User> visited = new HashSet<>();
+        ArrayList<User> result = new ArrayList<>();
+        stack.push(user);
+        visited.add(user);
+        while(!stack.isEmpty()){
+            User current = stack.pop();
+            result.add(current);
+            for (User friend: current.getFriends()){
+                if (!visited.contains(friend)){
+                    visited.add(friend);
+                    stack.push(friend);
+                }
+            }
+        }
+        return result;
+    }
 
 }
