@@ -11,8 +11,11 @@ public class SocialGraph {
         users = new HashMap<>();
     }
     public void addUser(User user){
+        if (users.containsKey(user.getId())){
+            System.out.println("ID already exists.");
+            return;
+        }
         users.put(user.getId(), user);
-
     }
     public User findUser(int id){
         return users.get(id);
@@ -22,6 +25,10 @@ public class SocialGraph {
         if (found == null){
             return false;
         }
+        for (User friend: new ArrayList<>(found.getFriends())){
+            friend.getFriends().remove(found);
+        }
+        found.getFriends().clear();
         users.remove(id);
         return true;
     }
@@ -32,16 +39,24 @@ public class SocialGraph {
             System.out.println("User not found.");
             return;
         }
-        user1.getFriends().add(user2);
-        user2.getFriends().add(user1);
+        if (id1 == id2){
+            System.out.println("A user cannot be friends with themselves.");
+            return;
+}
+        if (!user1.getFriends().contains(user2)){
+            user1.getFriends().add(user2);
+        }
+        if (!user2.getFriends().contains(user1)){
+            user2.getFriends().add(user1);
+        }
 
     }
 
-    public void bfsTraversal(int startId){
+    public ArrayList<User> bfsTraversal(int startId){
         User start = findUser(startId);
         if (start == null){
             System.out.println("User not found.");
-            return;
+            return new ArrayList<>();
         }
         Queue<User> traverse = new LinkedList<>();
         HashSet<User> visited = new HashSet<>();
@@ -51,7 +66,6 @@ public class SocialGraph {
         while(!traverse.isEmpty()){
             User current = traverse.poll();
             result.add(current);
-            System.out.println(current.getUser());
             for (User friend : current.getFriends()){
                 if (!visited.contains(friend)){
                     visited.add(friend);
@@ -59,6 +73,7 @@ public class SocialGraph {
                 }
             }
         }
+        return result;
     }
     public ArrayList<User> recommendFriends(int userId){
         User user = findUser(userId);
@@ -106,7 +121,7 @@ public class SocialGraph {
         if (user == null){
             return -1;
         }
-        return users.get(id).getFriends().size();
+        return user.getFriends().size();
     }
 
     public double averageFriendCount(){

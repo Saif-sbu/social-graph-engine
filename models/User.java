@@ -7,9 +7,10 @@ public class User {
     private ArrayList<User> friends;
 
     public User(){
+        this.friends = new ArrayList<>();
     }
 
-    public User(String user, int id, String email, ArrayList<User> friends){
+    public User(String user, int id, String email){
         this.user = user;
         this.id = id;
         this.email = email;
@@ -47,5 +48,10 @@ public class User {
 
     public void setFriends(ArrayList<User> friends){
         this.friends = friends;
+    }
+
+    @Override
+    public String toString(){
+        return "Name: " + user + ", ID: " + id + ", Email: " + email;
     }
 }
